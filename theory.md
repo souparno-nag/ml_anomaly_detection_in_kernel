@@ -98,3 +98,80 @@ Second row (TCP errors):
 ### 10. top
 
 top shows a real-time, sorted list of processes using the most CPU and memory. It's your primary dashboard for immediate system performance, showing overall resource usage and allowing interactive management.
+
+## BCC Tools - General Performance
+
+![BCC Tracing Tools](./linux_bcc_bpf_tracing_tools.png)
+
+### 1. execsnoop
+
+execsnoop prints one line of output for each new process.
+
+Columns:
+
+* **PCOMM**: Process name (e.g., docker).
+* **PID**: Process ID.
+* **PPID**: Parent Process ID.
+* **RET**: Return code (0 means success).
+* **ARGS**: Full command executed.
+
+> **Note:** It works by tracing exec(), not the fork(), so it will catch many types of new processes but not all (eg, it won't see an application launching working processes, that doesn't exec() anything else).
+
+### 2. opensnoop
+
+This tool shows every file opened on the system in real-time.
+
+Key columns:
+
+* **PID**: Process ID opening the file.
+* **COMM**: Command/process name.
+* **FD**: File descriptor number.
+* **PATH**: Full path of the file being accessed.
+
+### 3. ext4slower (or btrfs*, xfs*, zfs*)
+
+ext4slower traces the ext4 file system (the default Linux filesystem) and times common operations, and then only prints those that exceed a threshold.
+
+Key columns:
+
+* COMM: Process name causing the slow I/O.
+* T: Type: Read, Write, or Sync.
+* LAT(ms): Latency in milliseconds (how long it took). The key number.
+* FILENAME: File being accessed.
+
+### 4. profile
+
+profile is a CPU profiler, which takes samples of stack traces at timed intervals, and prints a summary of unique stack traces and a count of their occurrence.
+
+### 5. tcpconnect
+
+tcpconnect prints one line of output for every active TCP connection (eg, via connect()), with details including source and destination addresses.
+
+Key columns:
+
+* PID & COMM: Process ID and name making the connection.
+* SADDR: Source IP address (your machine).
+* DADDR: Destination IP address (where it's connecting to).
+* DPORT: Destination port (e.g., 443 for HTTPS, 80 for HTTP).
+
+### 6. tcpaccept
+
+tcpaccept prints one line of output for every passive TCP connection (eg, via accept()), with details including source and destination addresses.
+
+Key columns:
+
+* **PID** & **COMM**: Process ID and name making the connection.
+* **RADDR**: Remote IP address (the client connecting to you).
+* **RPORT**: Remote port (client's port).
+* **LADDR**: Local IP address (your machine's IP).
+* **LPORT**: Local port (the port your service is listening on).
+
+### 7. tcpretrans
+
+tcpretrans prints one line of output for every TCP retransmit packet, with details including source and destination addresses, and kernel state of the TCP connection.
+
+Key columns:
+
+* **LADDR:LPORT**: Your local IP and port.
+* **RADDR:RPORT**: Remote IP and port.
+* **STATE**: TCP connection state at the time of retransmit.
