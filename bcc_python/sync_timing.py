@@ -17,7 +17,7 @@ int do_trace(struct pt_regs *ctx) {
 	tsp = last.lookup(&key);
 	if (tsp != NULL) {
 		delta = bpf_ktime_get_ns() - *tsp;
-		if (tsp != NULL) {
+		if (delta < 1000000000) {
 			// output if time is less than 1 second
 			bpf_trace_printk("%d\\n", delta / 1000000);
 		}
