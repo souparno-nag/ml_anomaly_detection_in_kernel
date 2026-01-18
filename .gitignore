@@ -1,2 +1,4 @@
 os-env
 *.csv
+*.zip
+data/
