@@ -2,3 +2,6 @@ bcc
 numba
 pytest
 ipykernel
+scikit-learn
+torch
+torchvision
